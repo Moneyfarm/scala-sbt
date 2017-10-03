@@ -1,11 +1,14 @@
 # Scala and sbt Dockerfile
-FROM  openjdk:8u141-jdk
+FROM  openjdk:8u141-jdk-slim
 
 ENV SCALA_VERSION 2.12.3
 ENV SBT_VERSION 1.0.2
 
 # Scala expects this file
 RUN touch /usr/lib/jvm/java-8-openjdk-amd64/release
+
+# Install curl
+RUN apt-get update && apt-get install -y curl
 
 # Install Scala
 
