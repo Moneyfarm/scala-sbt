@@ -1,5 +1,5 @@
 # Scala and sbt Dockerfile
-FROM  openjdk:8u141-jdk-slim
+FROM  openjdk:8u141-jdk
 
 ENV SCALA_VERSION 2.12.3
 ENV SBT_VERSION 1.0.2
