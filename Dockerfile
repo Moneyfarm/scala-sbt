@@ -7,12 +7,11 @@ ENV SBT_VERSION 1.0.2
 # Scala expects this file
 RUN touch /usr/lib/jvm/java-8-openjdk-amd64/release
 
-# Install curl
-RUN apt-get update && apt-get install -y curl
-
-# Install git
-
-RUN apt-get install -y git
+# Install curl & git
+RUN apt-get update && \
+    apt-get install -y curl git && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Install Scala
 
@@ -29,7 +28,9 @@ RUN \
   rm sbt-$SBT_VERSION.deb && \
   apt-get update && \
   apt-get install sbt && \
-  sbt sbtVersion
+  apt-get clean && \
+  rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
+  sbt sbtVersion 
 
 # Add jenkins user
 RUN \
