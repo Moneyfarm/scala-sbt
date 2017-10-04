@@ -10,6 +10,10 @@ RUN touch /usr/lib/jvm/java-8-openjdk-amd64/release
 # Install curl
 RUN apt-get update && apt-get install -y curl
 
+# Install git
+
+RUN apt-get install -y git
+
 # Install Scala
 
 RUN \
