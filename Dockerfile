@@ -27,5 +27,12 @@ RUN \
 RUN \
     adduser --home /var/jenkins_home --disabled-password --uid 1000 jenkins
 
+# Add Wkhtmltopdf
+RUN wget https://downloads.wkhtmltopdf.org/0.12/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz && \
+    tar xf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz -C /opt && \
+    rm wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
+
+ENV PATH=$PATH:/opt/wkhtmltox/bin
+
 # Define working directory
 WORKDIR /root%
