@@ -1,5 +1,5 @@
 # Scala and sbt Dockerfile
-FROM  openjdk:8u141-jdk-slim
+FROM  openjdk:8u141-jdk
 
 ENV SCALA_VERSION 2.12.3
 ENV SBT_VERSION 1.0.2
@@ -7,19 +7,12 @@ ENV SBT_VERSION 1.0.2
 # Scala expects this file
 RUN touch /usr/lib/jvm/java-8-openjdk-amd64/release
 
-# Install curl & git
-RUN apt-get update && \
-    apt-get install -y curl git && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
 # Install Scala
 
 RUN \
   curl -fsL https://downloads.typesafe.com/scala/$SCALA_VERSION/scala-$SCALA_VERSION.tgz | tar xfz - -C /root/ && \
   echo >> /root/.bashrc && \
   echo 'export PATH=~/scala-$SCALA_VERSION/bin:$PATH' >> /root/.bashrc
-  
 
 # Install sbt
 RUN \
@@ -28,13 +21,11 @@ RUN \
   rm sbt-$SBT_VERSION.deb && \
   apt-get update && \
   apt-get install sbt && \
-  apt-get clean && \
-  rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
-  sbt sbtVersion 
+  sbt sbtVersion
 
 # Add jenkins user
 RUN \
     adduser --home /var/jenkins_home --disabled-password --uid 1000 jenkins
 
 # Define working directory
-WORKDIR /root
+WORKDIR /root%
