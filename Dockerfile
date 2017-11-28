@@ -2,7 +2,7 @@
 FROM  openjdk:8u151-jdk
 
 ENV SCALA_VERSION 2.12.4
-ENV SBT_VERSION 1.0.3
+ENV SBT_VERSION 1.0.4
 
 # Scala expects this file
 RUN touch /usr/lib/jvm/java-8-openjdk-amd64/release
@@ -20,7 +20,7 @@ RUN \
   dpkg -i sbt-$SBT_VERSION.deb && \
   rm sbt-$SBT_VERSION.deb && \
   apt-get update && \
-  apt-get install sbt bc -y && \
+  apt-get install sbt -y && \
   sbt sbtVersion
 
 # Add jenkins user
