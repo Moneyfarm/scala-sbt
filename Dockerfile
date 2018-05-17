@@ -1,8 +1,8 @@
 # Scala and sbt Dockerfile
-FROM  openjdk:8u151-jdk-slim
+FROM  openjdk:8u171-jdk-slim
 
-ENV SCALA_VERSION 2.12.4
-ENV SBT_VERSION 1.0.4
+ENV SCALA_VERSION 2.12.6
+ENV SBT_VERSION 1.1.5
 
 # Scala expects this file
 RUN touch /usr/lib/jvm/java-8-openjdk-amd64/release
@@ -10,14 +10,14 @@ RUN touch /usr/lib/jvm/java-8-openjdk-amd64/release
 # Dependecies
 RUN apt-get update &&\
     apt-get install -y curl git jq unzip xz-utils libfontconfig zlib1g libfreetype6 libxrender1 libxext6 libx11-6 &&\
-    apt-get clean &&\
+    apt-get clean autoremove -y &&\
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* 
 
 # Install Scala
 RUN \
   curl -fsL https://downloads.typesafe.com/scala/$SCALA_VERSION/scala-$SCALA_VERSION.tgz | tar xfz - -C /root/ && \
   echo >> /root/.bashrc && \
-  echo 'export PATH=~/scala-$SCALA_VERSION/bin:$PATH' >> /root/.bashrc
+  echo "export PATH=~/scala-$SCALA_VERSION/bin:$PATH" >> /root/.bashrc
 
 # Install sbt
 RUN \
@@ -29,6 +29,16 @@ RUN \
   apt-get clean &&\
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* &&\
   sbt sbtVersion
+
+RUN \
+  mkdir /tmp/sbt &&\
+  cd /tmp/sbt &&\
+  mkdir -p project project/project src/main/scala &&\
+  touch src/main/scala/scratch.scala &&\
+  echo "sbt.version=$SBT_VERSION" > project/build.properties &&\
+  sbt ++$SCALA_VERSION! clean update compile &&\
+  rm -rf /tmp/sbt
+
 
 # Add jenkins user
 RUN \
