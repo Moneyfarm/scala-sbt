@@ -1,15 +1,12 @@
 # Scala and sbt Dockerfile
-FROM  openjdk:8u171-jdk-slim
+FROM  openjdk:8-jdk-slim
 
-ENV SCALA_VERSION 2.12.6
-ENV SBT_VERSION 1.1.6
-
-# Scala expects this file
-RUN touch /usr/lib/jvm/java-8-openjdk-amd64/release
+ENV SCALA_VERSION 2.12.12
+ENV SBT_VERSION 1.4.1
 
 # Dependecies
 RUN apt-get update &&\
-    apt-get install -y curl git jq unzip xz-utils libfontconfig zlib1g libfreetype6 libxrender1 libxext6 libx11-6 &&\
+    apt-get install -qq -y curl git jq unzip xz-utils libfontconfig zlib1g libfreetype6 libxrender1 libxext6 libx11-6 &&\
     apt-get clean autoremove -y &&\
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* 
 
@@ -25,18 +22,19 @@ RUN \
   dpkg -i sbt-$SBT_VERSION.deb && \
   rm sbt-$SBT_VERSION.deb && \
   apt-get update && \
-  apt-get install sbt -y && \
+  apt-get -qq -y install sbt && \
   apt-get clean &&\
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* &&\
-  sbt sbtVersion
+  sbt -Dsbt.rootdir=true -batch sbtVersion
 
+# Test sbt
 RUN \
   mkdir /tmp/sbt &&\
   cd /tmp/sbt &&\
   mkdir -p project project/project src/main/scala &&\
   touch src/main/scala/scratch.scala &&\
   echo "sbt.version=$SBT_VERSION" > project/build.properties &&\
-  sbt ++$SCALA_VERSION! clean update compile &&\
+  sbt -batch ++$SCALA_VERSION! clean update compile &&\
   rm -rf /tmp/sbt
 
 
