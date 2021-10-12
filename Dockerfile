@@ -1,12 +1,12 @@
 # Scala and sbt Dockerfile
 FROM  openjdk:8-jdk-slim
 
-ENV SCALA_VERSION 2.12.12
-ENV SBT_VERSION 1.4.1
+ENV SCALA_VERSION 2.13.6
+ENV SBT_VERSION 1.5.5
 
 # Dependecies
 RUN apt-get update &&\
-    apt-get install -qq -y curl git jq unzip xz-utils libfontconfig zlib1g libfreetype6 libxrender1 libxext6 libx11-6 &&\
+    apt-get install -qq -y curl git jq unzip xz-utils libfontconfig zlib1g libfreetype6 libxrender1 libxext6 libx11-6 xmlstarlet &&\
     apt-get clean autoremove -y &&\
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* 
 
@@ -18,13 +18,14 @@ RUN \
 
 # Install sbt
 RUN \
-  curl -L -o sbt-$SBT_VERSION.deb https://dl.bintray.com/sbt/debian/sbt-$SBT_VERSION.deb && \
-  dpkg -i sbt-$SBT_VERSION.deb && \
-  rm sbt-$SBT_VERSION.deb && \
-  apt-get update && \
-  apt-get -qq -y install sbt && \
-  apt-get clean &&\
-  rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* &&\
+  curl -L -o sbt-${SBT_VERSION}.zip https://github.com/sbt/sbt/releases/download/v${SBT_VERSION}/sbt-${SBT_VERSION}.zip && \
+  unzip sbt-${SBT_VERSION}.zip && \
+  rm sbt-${SBT_VERSION}.zip
+
+# Configure sbt path
+RUN \
+  ln -s $PWD/sbt/bin/sbt /bin/sbt && \
+  echo $PATH && \
   sbt -Dsbt.rootdir=true -batch sbtVersion
 
 # Test sbt
